@@ -29,11 +29,10 @@ var IngredientBox= React.createClass({
       </div>       
     )
   }
-
 })
 
 var ContainerBox= React.createClass({
-  getDefaultProps: function(){
+  getInitialState: function(){
     return({
       "recipes":["coconutpie"]
     })
@@ -43,8 +42,14 @@ var ContainerBox= React.createClass({
     if(e.target.id=="modal-enter-button"){
       var recipe      = document.getElementById("text-modal").value,
           ingredients = document.getElementById("ingredients-modal").value.split(",").map(function(data){
-                    return (data.trim());
-                  });
+                          return (data.trim());
+                        });
+          console.log(recipe, ingredients);
+          if(recipe.length>0 && ingredients.length>0){
+            var r_copy= this.state.recipes.slice();
+            r_copy.push(recipe);
+            this.setState({recipes: r_copy});
+          }
     }
   },
 
@@ -52,7 +57,7 @@ var ContainerBox= React.createClass({
     return(
       <div className='containerbox' onClick={this.handleClick}>
         {
-          this.props.recipes.map(function(data, index){
+          this.state.recipes.map(function(data, index){
             return(
               <IngredientBox name={data} key={index}/>
             )
@@ -101,6 +106,9 @@ var Menus= React.createClass({
         this.setState({"modal": "hidden"});
       break;
       case "modal-enter-button":
+        this.setState({"modal":"hidden"});
+        break;
+      case "modal-back-button":
         this.setState({"modal":"hidden"});
         break;
     }

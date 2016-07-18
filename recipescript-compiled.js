@@ -30,13 +30,12 @@ var IngredientBox = React.createClass({
       })
     );
   }
-
 });
 
 var ContainerBox = React.createClass({
   displayName: "ContainerBox",
 
-  getDefaultProps: function () {
+  getInitialState: function () {
     return {
       "recipes": ["coconutpie"]
     };
@@ -48,6 +47,12 @@ var ContainerBox = React.createClass({
           ingredients = document.getElementById("ingredients-modal").value.split(",").map(function (data) {
         return data.trim();
       });
+      console.log(recipe, ingredients);
+      if (recipe.length > 0 && ingredients.length > 0) {
+        var r_copy = this.state.recipes.slice();
+        r_copy.push(recipe);
+        this.setState({ recipes: r_copy });
+      }
     }
   },
 
@@ -55,7 +60,7 @@ var ContainerBox = React.createClass({
     return React.createElement(
       "div",
       { className: "containerbox", onClick: this.handleClick },
-      this.props.recipes.map(function (data, index) {
+      this.state.recipes.map(function (data, index) {
         return React.createElement(IngredientBox, { name: data, key: index });
       }),
       React.createElement(Menus, null)
@@ -113,6 +118,9 @@ var Menus = React.createClass({
         if (this.state.modal == "hidden") this.setState({ "modal": "visible" });else this.setState({ "modal": "hidden" });
         break;
       case "modal-enter-button":
+        this.setState({ "modal": "hidden" });
+        break;
+      case "modal-back-button":
         this.setState({ "modal": "hidden" });
         break;
     }
