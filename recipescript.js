@@ -20,9 +20,9 @@ var IngredientBox= React.createClass({
     return(
       <div {...this.props} className="ingbox" id={"ingbox-"+this.props.name}>
       {
-        this.props.ingredients.map(function(data){
+        this.props.ingredients.map(function(data, index){
           return(
-            <Ingredient name={data}/> 
+            <Ingredient name={data} key={index}/> 
           )
         })
       }
@@ -38,21 +38,83 @@ var ContainerBox= React.createClass({
       "recipes":["coconutpie"]
     })
   },
+
+  handleClick: function(e){
+    if(e.target.id=="modal-enter-button"){
+      var recipe      = document.getElementById("text-modal").value,
+          ingredients = document.getElementById("ingredients-modal").value.split(",").map(function(data){
+                    return (data.trim());
+                  });
+    }
+  },
+
   render: function(){
     return(
-      <div className='containerbox'>
+      <div className='containerbox' onClick={this.handleClick}>
         {
-          this.props.recipes.map(function(data){
+          this.props.recipes.map(function(data, index){
             return(
-              <IngredientBox name={data}/>
+              <IngredientBox name={data} key={index}/>
             )
           })
         }
+        <Menus/>
       </div>
     )
   }
+});
 
+var Modal= React.createClass({
+  render: function(){
+    return(
+      <div className="modal">
+        <input type="text" id="text-modal"/>
+        <input type="text" id="ingredients-modal"/>
+        <button className="modal-button enter-button" id="modal-enter-button">OK</button>
+        <button className="modal-button back-button" id="modal-back-button">BACK</button>
+      </div>
+    )
+  }
 })
+
+var ButtonAdd= React.createClass({
+  render: function(){
+    return(
+      <button id="add-button" className="m-button add-button"> add </button>
+      )
+  }
+});
+
+var Menus= React.createClass({
+  getInitialState: function(){
+    return({
+      "modal":"hidden"
+    })
+  },
+
+  handleClick: function(e){
+    switch(e.target.id){
+      case "add-button":
+      if(this.state.modal=="hidden")
+        this.setState({"modal":"visible"});
+      else 
+        this.setState({"modal": "hidden"});
+      break;
+      case "modal-enter-button":
+        this.setState({"modal":"hidden"});
+        break;
+    }
+  },
+
+  render: function(){
+    return(
+      <div className="menus" onClick={this.handleClick}>
+        <ButtonAdd/>
+        {this.state.modal=="visible"? <Modal/>: null}
+      </div>
+      )
+  }
+});
 
 var RecipeBox= React.createClass({
   render: function(){

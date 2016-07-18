@@ -25,8 +25,8 @@ var IngredientBox = React.createClass({
     return React.createElement(
       "div",
       _extends({}, this.props, { className: "ingbox", id: "ingbox-" + this.props.name }),
-      this.props.ingredients.map(function (data) {
-        return React.createElement(Ingredient, { name: data });
+      this.props.ingredients.map(function (data, index) {
+        return React.createElement(Ingredient, { name: data, key: index });
       })
     );
   }
@@ -41,16 +41,91 @@ var ContainerBox = React.createClass({
       "recipes": ["coconutpie"]
     };
   },
+
+  handleClick: function (e) {
+    if (e.target.id == "modal-enter-button") {
+      var recipe = document.getElementById("text-modal").value,
+          ingredients = document.getElementById("ingredients-modal").value.split(",").map(function (data) {
+        return data.trim();
+      });
+    }
+  },
+
   render: function () {
     return React.createElement(
       "div",
-      { className: "containerbox" },
-      this.props.recipes.map(function (data) {
-        return React.createElement(IngredientBox, { name: data });
-      })
+      { className: "containerbox", onClick: this.handleClick },
+      this.props.recipes.map(function (data, index) {
+        return React.createElement(IngredientBox, { name: data, key: index });
+      }),
+      React.createElement(Menus, null)
     );
   }
+});
 
+var Modal = React.createClass({
+  displayName: "Modal",
+
+  render: function () {
+    return React.createElement(
+      "div",
+      { className: "modal" },
+      React.createElement("input", { type: "text", id: "text-modal" }),
+      React.createElement("input", { type: "text", id: "ingredients-modal" }),
+      React.createElement(
+        "button",
+        { className: "modal-button enter-button", id: "modal-enter-button" },
+        "OK"
+      ),
+      React.createElement(
+        "button",
+        { className: "modal-button back-button", id: "modal-back-button" },
+        "BACK"
+      )
+    );
+  }
+});
+
+var ButtonAdd = React.createClass({
+  displayName: "ButtonAdd",
+
+  render: function () {
+    return React.createElement(
+      "button",
+      { id: "add-button", className: "m-button add-button" },
+      " add "
+    );
+  }
+});
+
+var Menus = React.createClass({
+  displayName: "Menus",
+
+  getInitialState: function () {
+    return {
+      "modal": "hidden"
+    };
+  },
+
+  handleClick: function (e) {
+    switch (e.target.id) {
+      case "add-button":
+        if (this.state.modal == "hidden") this.setState({ "modal": "visible" });else this.setState({ "modal": "hidden" });
+        break;
+      case "modal-enter-button":
+        this.setState({ "modal": "hidden" });
+        break;
+    }
+  },
+
+  render: function () {
+    return React.createElement(
+      "div",
+      { className: "menus", onClick: this.handleClick },
+      React.createElement(ButtonAdd, null),
+      this.state.modal == "visible" ? React.createElement(Modal, null) : null
+    );
+  }
 });
 
 var RecipeBox = React.createClass({
