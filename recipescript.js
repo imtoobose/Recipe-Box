@@ -1,3 +1,12 @@
+  /* CODE FOR DELETION
+  for (var i in values){
+    if(values[i].recipe_in==thisRecipeName) { 
+      values.splice(i, 1);
+      break; 
+    } 
+  }
+*/
+
 //Holds the ingredient 
 var Ingredient = React.createClass({
   render: function(){
@@ -150,7 +159,7 @@ var ContainerBox= React.createClass({
             var r_wrapper={
               allRecipes: r_copy
             };
-
+            
             window.localStorage.setItem('values', JSON.stringify(r_wrapper));
             this.setState({recipes: r_copy});
           }

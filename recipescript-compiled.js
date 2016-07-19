@@ -1,5 +1,14 @@
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+/* CODE FOR DELETION
+for (var i in values){
+  if(values[i].recipe_in==thisRecipeName) { 
+    values.splice(i, 1);
+    break; 
+  } 
+}
+*/
+
 //Holds the ingredient
 var Ingredient = React.createClass({
   displayName: "Ingredient",

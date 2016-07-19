@@ -1,0 +1,15 @@
+.containerbox{
+  position:relative;
+  margin: 0 auto;
+  width: 80%;
+}
+
+.ingbox{
+  display:block;
+  height:100px;
+  width:100px;
+  background: hsl(180,40, 70);
+  float:left;
+  margin:10px;
+  cursor:pointer;
+}
