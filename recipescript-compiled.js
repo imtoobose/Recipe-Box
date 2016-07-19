@@ -127,7 +127,7 @@ var ContainerBox = React.createClass({
   displayName: "ContainerBox",
 
   getInitialState: function () {
-    if (window.localStorage && window.localStorage.values && window.localStorage.length > 0 && !(window.localStorage.length == 1 && window.localStorage[0] == "")) {
+    if (window.localStorage && window.localStorage.values) {
       console.log('yes');
       return { "recipes": JSON.parse(window.localStorage.getItem('values')).allRecipes };
     } else {
