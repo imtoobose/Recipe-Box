@@ -1,15 +1,42 @@
+@mixin center{
+  position: absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%, -50%);
+}
+
 .containerbox{
-  position:relative;
+  display:flex;
+  flex-wrap: wrap;
+  flex-direction: row;
   margin: 0 auto;
+  position:relative;
   width: 80%;
+  height: auto;
+}
+
+.menus{
+  position:relative;
+  width:100%;
+}
+#modal{
+  position: absolute;
+  border: solid black 2px;
+  @include center;
+  z-index: 1000;
+  display:block;
+  height:200px;
+  width: 80%;
+  max-width: 500px;
 }
 
 .ingbox{
-  display:block;
-  height:100px;
-  width:100px;
   background: hsl(180,40, 70);
-  float:left;
-  margin:10px;
   cursor:pointer;
+  display:block;
+  flex: 1 0 1;
+  height:100px;
+  margin:10px;
+  overflow-y:auto;
+  width:100px;
 }

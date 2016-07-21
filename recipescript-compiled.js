@@ -60,17 +60,17 @@ var Modal = React.createClass({
   render: function () {
     return React.createElement(
       "div",
-      { className: "modal" },
-      React.createElement("input", { type: "text", id: "text-modal" }),
-      React.createElement("input", { type: "text", id: "ingredients-modal" }),
+      _extends({}, this.props, { className: "modal" }),
+      React.createElement("input", { type: "text", id: "text-modal", value: this.props.textval == "" ? "" : this.props.textval }),
+      React.createElement("input", { type: "text", id: "ingredients-modal", value: this.props.ingval == "" ? "" : this.props.ingval }),
       React.createElement(
         "button",
-        { className: "modal-button enter-button", id: "modal-enter-button" },
+        { className: "modal-button enter-button", id: this.props.id + "-enter-button" },
         "OK"
       ),
       React.createElement(
         "button",
-        { className: "modal-button back-button", id: "modal-back-button" },
+        { className: "modal-button back-button", id: this.props.id + "-back-button" },
         "BACK"
       )
     );
@@ -125,7 +125,7 @@ var Menus = React.createClass({
       "div",
       { className: "menus", onClick: this.handleClick },
       React.createElement(ButtonAdd, null),
-      this.state.modal == "visible" ? React.createElement(Modal, null) : null
+      this.state.modal == "visible" ? React.createElement(Modal, { id: "modal" }) : null
     );
   }
 });
@@ -153,7 +153,7 @@ var ContainerBox = React.createClass({
       window.localStorage.setItem('values', JSON.stringify(initRecipe));
 
       return {
-        "recipes": [{ "recipe_in": "cocounutpie", "ingredient_in": ["coconut"] }]
+        "recipes": initRecipe.allRecipes
       };
     }
   },

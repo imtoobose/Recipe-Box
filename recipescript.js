@@ -49,11 +49,11 @@ var IngredientBox= React.createClass({
 var Modal= React.createClass({
   render: function(){
     return(
-      <div className="modal">
-        <input type="text" id="text-modal"/>
-        <input type="text" id="ingredients-modal"/>
-        <button className="modal-button enter-button" id="modal-enter-button">OK</button>
-        <button className="modal-button back-button" id="modal-back-button">BACK</button>
+      <div {...this.props} className="modal">
+        <input type="text" id="text-modal" value={this.props.textval==""?"":this.props.textval}/>
+        <input type="text" id="ingredients-modal" value={this.props.ingval==""?"":this.props.ingval}/>
+        <button className="modal-button enter-button" id={this.props.id+"-enter-button"}>OK</button>
+        <button className="modal-button back-button" id={this.props.id+"-back-button"}>BACK</button>
       </div>
     )
   }
@@ -105,7 +105,7 @@ var Menus= React.createClass({
     return(
       <div className="menus" onClick={this.handleClick}>
         <ButtonAdd/>
-        {this.state.modal=="visible"? <Modal/>: null}
+        {this.state.modal=="visible"? <Modal id="modal"/>: null}
       </div>
       )
   }
@@ -135,7 +135,7 @@ var ContainerBox= React.createClass({
       window.localStorage.setItem('values', JSON.stringify(initRecipe));
     
       return({
-        "recipes":[{"recipe_in":"cocounutpie", "ingredient_in":["coconut"]}]
+        "recipes":initRecipe.allRecipes
       })
     }
   },
