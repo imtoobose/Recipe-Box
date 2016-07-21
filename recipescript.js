@@ -70,42 +70,10 @@ var ButtonAdd= React.createClass({
 
 //interaction with the button and modal
 var Menus= React.createClass({
-  getInitialState: function(){
-    return({
-      "modal":"hidden"
-    })
-  },
-
-  handleClick: function(e){
-    switch(e.target.id){
-      case "add-button":
-      if(this.state.modal=="hidden")
-        this.setState({"modal":"visible"});
-      else 
-        this.setState({"modal": "hidden"});
-      break;
-      case "modal-enter-button":
-        var l1= document.getElementById("text-modal").value.length,
-            l2= document.getElementById("ingredients-modal").value.length;
-        if(l1>0 && l2>0){
-          this.setState({"modal":"hidden"});
-        }
-        else {
-          if(l1===0) document.getElementById("text-modal").focus();
-          else document.getElementById("ingredients-modal").focus();
-        }
-        break;
-      case "modal-back-button":
-        this.setState({"modal":"hidden"});
-        break;
-    }
-  },
-
   render: function(){
     return(
-      <div className="menus" onClick={this.handleClick}>
+      <div className="menus">
         <ButtonAdd/>
-        {this.state.modal=="visible"? <Modal id="modal"/>: null}
       </div>
       )
   }
@@ -117,7 +85,11 @@ var ContainerBox= React.createClass({
   getInitialState: function(){
     if(window.localStorage && window.localStorage.values){
       console.log('yes');
-      return ({"recipes": (JSON.parse(window.localStorage.getItem('values'))).allRecipes});
+      return (
+        {
+          "recipes": (JSON.parse(window.localStorage.getItem('values'))).allRecipes,
+          "modal": "hidden"
+        });
     }
 
     else{
@@ -135,40 +107,65 @@ var ContainerBox= React.createClass({
       window.localStorage.setItem('values', JSON.stringify(initRecipe));
     
       return({
-        "recipes":initRecipe.allRecipes
+        "recipes":initRecipe.allRecipes,
+        "modal":"hidden"
       })
     }
   },
 
   handleClick: function(e){
-    if(e.target.id=="modal-enter-button"){
-      //adding new recipes
-      var recipe      = document.getElementById("text-modal").value,
-          ingredients = document.getElementById("ingredients-modal").value.split(",").map(function(data){
+    var id= e.target.id;
+    switch(id){
+      case "modal-enter-button":
+        var recipe      = document.getElementById("text-modal").value,
+            ingredients = document.getElementById("ingredients-modal").value.split(",").map(function(data){
                           return (data.trim());
                         });
 
-          if(recipe.length>0 && !(ingredients.length==1 && ingredients[0]=="")){
-            var r_copy= this.state.recipes.slice();
-            r_copy.push(
-              {
-                "recipe_in": recipe,
-                "ingredient_in":ingredients
+        if(recipe.length>0 && !(ingredients.length==1 && ingredients[0]=="")){
+          var r_copy= this.state.recipes.slice();
+          r_copy.push(
+          {
+            "recipe_in": recipe,
+            "ingredient_in":ingredients
           });
 
-            var r_wrapper={
-              allRecipes: r_copy
-            };
+          var r_wrapper={
+            allRecipes: r_copy
+          };
             
-            window.localStorage.setItem('values', JSON.stringify(r_wrapper));
-            this.setState({recipes: r_copy});
-          }
+          window.localStorage.setItem('values', JSON.stringify(r_wrapper));
+          this.setState({recipes: r_copy});
+        }
+
+        var l1= document.getElementById("text-modal").value.length,
+            l2= document.getElementById("ingredients-modal").value.length;
+        if(l1>0 && l2>0){
+          this.setState({"modal":"hidden"});
+        }
+        else {
+          if(l1===0) document.getElementById("text-modal").focus();
+          else document.getElementById("ingredients-modal").focus();
+        }
+
+        break;
+
+      case "add-button":
+        if(this.state.modal=="hidden")
+          this.setState({"modal":"visible"});
+        else 
+          this.setState({"modal": "hidden"});
+        break;
+
+      case "modal-back-button":
+        this.setState({"modal":"hidden"});
+        break;
     }
   },
 
   render: function(){
     return(
-      <div className='containerbox' onClick={this.handleClick}>
+      <div className={'containerbox '+ (this.state.modal=="visible"?"modal-active":"modal-inactive")} onClick={this.handleClick}>
         <Menus/>
         {
           this.state.recipes.map(function(data, index){
@@ -177,6 +174,7 @@ var ContainerBox= React.createClass({
             )
           })
         }
+        {this.state.modal=="visible"? <Modal id="modal"/>: null}
       </div>
     )
   }

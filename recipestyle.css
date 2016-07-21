@@ -5,24 +5,30 @@
   margin: 0 auto;
   position: relative;
   width: 80%;
-  height: auto; }
+  height: 100%;
+  transition: all 0.5s ease;
+  transform-style: preserve-3d; }
 
 .menus {
   position: relative;
   width: 100%; }
 
 #modal {
-  position: absolute;
   border: solid black 2px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
   display: block;
+  flex: none;
   height: 200px;
+  left: 50%;
+  max-width: 500px;
+  position: absolute;
+  transform: translateX(-50%);
   width: 80%;
-  max-width: 500px; }
+  z-index: 1000; }
+
+.modal-active {
+  opacity: 0.5; }
+  .modal-active #modal {
+    opacity: 1 !important; }
 
 .ingbox {
   background: #94d1d1;
