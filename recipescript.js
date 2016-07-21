@@ -87,8 +87,7 @@ var ContainerBox= React.createClass({
       console.log('yes');
       return (
         {
-          "recipes": (JSON.parse(window.localStorage.getItem('values'))).allRecipes,
-          "modal": "hidden"
+          "recipes": (JSON.parse(window.localStorage.getItem('values'))).allRecipes
         });
     }
 
@@ -107,8 +106,7 @@ var ContainerBox= React.createClass({
       window.localStorage.setItem('values', JSON.stringify(initRecipe));
     
       return({
-        "recipes":initRecipe.allRecipes,
-        "modal":"hidden"
+        "recipes":initRecipe.allRecipes
       })
     }
   },
@@ -137,7 +135,35 @@ var ContainerBox= React.createClass({
           window.localStorage.setItem('values', JSON.stringify(r_wrapper));
           this.setState({recipes: r_copy});
         }
+        break;
+    }
+  },
 
+  render: function(){
+    return(
+      <div {...this.props} className={'containerbox modal-'+this.props.modalVisible} onClick={this.handleClick}>
+        <Menus/>
+        {
+          this.state.recipes.map(function(data, index){
+            return(
+              <IngredientBox name={data.recipe_in} ingredients={data.ingredient_in} key={index}/>
+            )
+          })
+        }
+      </div>
+    )
+  }
+});
+
+//Just a wrapper
+var RecipeBox= React.createClass({
+  getInitialState: function(){
+    return({"modal":"hidden"})
+  },
+
+  handleClick: function(e){
+    switch(e.target.id){
+      case "modal-enter-button":
         var l1= document.getElementById("text-modal").value.length,
             l2= document.getElementById("ingredients-modal").value.length;
         if(l1>0 && l2>0){
@@ -147,7 +173,6 @@ var ContainerBox= React.createClass({
           if(l1===0) document.getElementById("text-modal").focus();
           else document.getElementById("ingredients-modal").focus();
         }
-
         break;
 
       case "add-button":
@@ -162,30 +187,11 @@ var ContainerBox= React.createClass({
         break;
     }
   },
-
-  render: function(){
-    return(
-      <div className={'containerbox '+ (this.state.modal=="visible"?"modal-active":"modal-inactive")} onClick={this.handleClick}>
-        <Menus/>
-        {
-          this.state.recipes.map(function(data, index){
-            return(
-              <IngredientBox name={data.recipe_in} ingredients={data.ingredient_in} key={index}/>
-            )
-          })
-        }
-        {this.state.modal=="visible"? <Modal id="modal"/>: null}
-      </div>
-    )
-  }
-});
-
-//Just a wrapper
-var RecipeBox= React.createClass({
   render: function(){
     return (
-    <div className="recipebox" id="i_recipebox">
-      <ContainerBox/>
+    <div className="recipebox" id="i_recipebox" onClick={this.handleClick}>
+      <ContainerBox modalVisible={this.state.modal=="hidden"?"inactive":"active"}/>
+      {this.state.modal=="visible"? <Modal id="modal"/>: null}
     </div>
     )
   }

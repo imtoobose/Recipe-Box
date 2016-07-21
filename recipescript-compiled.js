@@ -112,8 +112,7 @@ var ContainerBox = React.createClass({
     if (window.localStorage && window.localStorage.values) {
       console.log('yes');
       return {
-        "recipes": JSON.parse(window.localStorage.getItem('values')).allRecipes,
-        "modal": "hidden"
+        "recipes": JSON.parse(window.localStorage.getItem('values')).allRecipes
       };
     } else {
       var initRecipe = {
@@ -129,8 +128,7 @@ var ContainerBox = React.createClass({
       window.localStorage.setItem('values', JSON.stringify(initRecipe));
 
       return {
-        "recipes": initRecipe.allRecipes,
-        "modal": "hidden"
+        "recipes": initRecipe.allRecipes
       };
     }
   },
@@ -158,7 +156,33 @@ var ContainerBox = React.createClass({
           window.localStorage.setItem('values', JSON.stringify(r_wrapper));
           this.setState({ recipes: r_copy });
         }
+        break;
+    }
+  },
 
+  render: function () {
+    return React.createElement(
+      "div",
+      _extends({}, this.props, { className: 'containerbox modal-' + this.props.modalVisible, onClick: this.handleClick }),
+      React.createElement(Menus, null),
+      this.state.recipes.map(function (data, index) {
+        return React.createElement(IngredientBox, { name: data.recipe_in, ingredients: data.ingredient_in, key: index });
+      })
+    );
+  }
+});
+
+//Just a wrapper
+var RecipeBox = React.createClass({
+  displayName: "RecipeBox",
+
+  getInitialState: function () {
+    return { "modal": "hidden" };
+  },
+
+  handleClick: function (e) {
+    switch (e.target.id) {
+      case "modal-enter-button":
         var l1 = document.getElementById("text-modal").value.length,
             l2 = document.getElementById("ingredients-modal").value.length;
         if (l1 > 0 && l2 > 0) {
@@ -166,7 +190,6 @@ var ContainerBox = React.createClass({
         } else {
           if (l1 === 0) document.getElementById("text-modal").focus();else document.getElementById("ingredients-modal").focus();
         }
-
         break;
 
       case "add-button":
@@ -178,29 +201,12 @@ var ContainerBox = React.createClass({
         break;
     }
   },
-
   render: function () {
     return React.createElement(
       "div",
-      { className: 'containerbox ' + (this.state.modal == "visible" ? "modal-active" : "modal-inactive"), onClick: this.handleClick },
-      React.createElement(Menus, null),
-      this.state.recipes.map(function (data, index) {
-        return React.createElement(IngredientBox, { name: data.recipe_in, ingredients: data.ingredient_in, key: index });
-      }),
+      { className: "recipebox", id: "i_recipebox", onClick: this.handleClick },
+      React.createElement(ContainerBox, { modalVisible: this.state.modal == "hidden" ? "inactive" : "active" }),
       this.state.modal == "visible" ? React.createElement(Modal, { id: "modal" }) : null
-    );
-  }
-});
-
-//Just a wrapper
-var RecipeBox = React.createClass({
-  displayName: "RecipeBox",
-
-  render: function () {
-    return React.createElement(
-      "div",
-      { className: "recipebox", id: "i_recipebox" },
-      React.createElement(ContainerBox, null)
     );
   }
 });

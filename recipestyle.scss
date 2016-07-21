@@ -5,6 +5,10 @@
   transform:translate(-50%, -50%);
 }
 
+button{
+  cursor:pointer;
+}
+
 .containerbox{
   display:flex;
   flex-wrap: wrap;
@@ -14,7 +18,18 @@
   width: 80%;
   height: 100%;
   transition: all 0.5s ease;
-  transform-style: preserve-3d;
+}
+
+.ingbox{
+  background: hsl(180,40, 70);
+  cursor:pointer;
+  display:block;
+  flex: 1 0 auto;
+  height:100px;
+  margin:10px;
+  overflow-y:auto;
+  width:100px;
+  max-width:100px;
 }
 
 .menus{
@@ -23,32 +38,36 @@
 }
 
 #modal{
+  animation: popOut 0.5s ease 1;
+  background:white;
   border: solid black 2px;
   display:block;
-  flex:none;
   height:200px;
   left:50%;
   max-width: 500px;
   position: absolute;
+  top:10%;
   transform:translateX(-50%);
   width: 80%;
-  z-index: 1000;
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
 }
 
 .modal-active{
   opacity:0.5;
-  & #modal{
-    opacity:1 !important;
-  }
+  pointer-events:none;
+  transform: translateZ(-150px);
 }
 
-.ingbox{
-  background: hsl(180,40, 70);
-  cursor:pointer;
-  display:block;
-  flex: 1 0 1;
-  height:100px;
-  margin:10px;
-  overflow-y:auto;
-  width:100px;
+.recipebox{
+  transform-style: preserve-3d;
+  -webkit-perspective: 1500px;
+}
+@keyframes popOut{
+  0% {
+    transform:translateX(-50%) translateZ(150px) rotateX(-20deg);
+  }
+  100% {
+    transform:translateX(-50%) translateZ(0px) rotateX(0deg);
+  }
 }
