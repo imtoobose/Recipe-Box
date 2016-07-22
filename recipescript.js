@@ -24,15 +24,21 @@ var IngredientBox= React.createClass({
     return({"show_ings":"no"})
   },
 
-  handleClick: function(){
-    var val=this.state.show_ings=="yes"? "no":"yes";
-    this.setState({"show_ings": val}); 
+  handleClick: function(e){
+    if(e.target.id!== (this.props.id+"-edit-button") && e.target.id!== (this.props.id+"-delete-button"))
+    {
+      var val=this.state.show_ings=="yes"? "no":"yes";
+      this.setState({"show_ings": val});
+    } 
   },
 
   render: function(){
     return(
       <div {...this.props} className="ingbox" onClick={this.handleClick}>
+      
       <div className="ingbox-name"> {this.props.name} </div> 
+      <button id={this.props.id+"-edit-button"} className="ing-edit-button"> EDIT </button>
+      <button id={this.props.id+"-delete-button"} className="ing-delete-button"> DELETE </button>
       {
         this.state.show_ings=="yes"? this.props.ingredients.map(function(data, index){
           return(
@@ -50,8 +56,8 @@ var Modal= React.createClass({
   render: function(){
     return(
       <div {...this.props} className="modal">
-        <input type="text" id="text-modal" value={this.props.textval==""?"":this.props.textval}/>
-        <input type="text" id="ingredients-modal" value={this.props.ingval==""?"":this.props.ingval}/>
+        <input type="text" id="text-modal" defaultValue={this.props.vals==null?"":this.props.vals.recipe_in}/>
+        <input type="text" id="ingredients-modal" defaultValue={this.props.vals==null?"":this.props.vals.ingredient_in.join(", ")}/>
         <button className="modal-button enter-button" id={this.props.id+"-enter-button"}>OK</button>
         <button className="modal-button back-button" id={this.props.id+"-back-button"}>BACK</button>
       </div>
@@ -82,11 +88,24 @@ var Menus= React.createClass({
 //main parent container
 //holds all children
 var ContainerBox= React.createClass({
+  render: function(){
+    return(
+      <div {...this.props} className={'containerbox modal-'+this.props.modalVisible} onClick={this.handleClick}>
+        
+      </div>
+    )
+  }
+});
+
+//Just a wrapper
+var RecipeBox= React.createClass({
   getInitialState: function(){
     if(window.localStorage && window.localStorage.values){
-      console.log('yes');
       return (
         {
+          "edit-box":null,
+          "modalMode":"add",
+          "modal":"hidden",
           "recipes": (JSON.parse(window.localStorage.getItem('values'))).allRecipes
         });
     }
@@ -94,8 +113,9 @@ var ContainerBox= React.createClass({
     else{
       var initRecipe={
         "allRecipes": [
-          {"recipe_in":"cocounutpie", 
-           "ingredient_in":["coconut"]
+          {
+            "recipe_in":"Cocounut Pie", 
+           "ingredient_in":["Coconut"]
          }]};
 
       initRecipe.allRecipes.push({
@@ -106,59 +126,10 @@ var ContainerBox= React.createClass({
       window.localStorage.setItem('values', JSON.stringify(initRecipe));
     
       return({
+        "modal": "hidden",
         "recipes":initRecipe.allRecipes
       })
     }
-  },
-
-  handleClick: function(e){
-    var id= e.target.id;
-    switch(id){
-      case "modal-enter-button":
-        var recipe      = document.getElementById("text-modal").value,
-            ingredients = document.getElementById("ingredients-modal").value.split(",").map(function(data){
-                          return (data.trim());
-                        });
-
-        if(recipe.length>0 && !(ingredients.length==1 && ingredients[0]=="")){
-          var r_copy= this.state.recipes.slice();
-          r_copy.push(
-          {
-            "recipe_in": recipe,
-            "ingredient_in":ingredients
-          });
-
-          var r_wrapper={
-            allRecipes: r_copy
-          };
-            
-          window.localStorage.setItem('values', JSON.stringify(r_wrapper));
-          this.setState({recipes: r_copy});
-        }
-        break;
-    }
-  },
-
-  render: function(){
-    return(
-      <div {...this.props} className={'containerbox modal-'+this.props.modalVisible} onClick={this.handleClick}>
-        <Menus/>
-        {
-          this.state.recipes.map(function(data, index){
-            return(
-              <IngredientBox name={data.recipe_in} ingredients={data.ingredient_in} key={index}/>
-            )
-          })
-        }
-      </div>
-    )
-  }
-});
-
-//Just a wrapper
-var RecipeBox= React.createClass({
-  getInitialState: function(){
-    return({"modal":"hidden"})
   },
 
   handleClick: function(e){
@@ -166,32 +137,102 @@ var RecipeBox= React.createClass({
       case "modal-enter-button":
         var l1= document.getElementById("text-modal").value.length,
             l2= document.getElementById("ingredients-modal").value.length;
-        if(l1>0 && l2>0){
-          this.setState({"modal":"hidden"});
-        }
-        else {
+        if(!(l1>0 && l2>0)){
           if(l1===0) document.getElementById("text-modal").focus();
           else document.getElementById("ingredients-modal").focus();
         }
+
+        else{
+          var recipe      = document.getElementById("text-modal").value,
+            ingredients   = document.getElementById("ingredients-modal").value.split(",").map(function(data){
+                          return (data.trim());
+                        });
+
+          if(recipe.length>0 && !(ingredients.length==1 && ingredients[0]=="")){
+            var r_copy= this.state.recipes.slice();
+            if(this.state.modalMode=="add"){
+              r_copy.push(
+              {
+                "recipe_in": recipe,
+                "ingredient_in":ingredients
+              });
+            }
+            else{
+              var in_ind= + (this.state.modalMode.replace("edit", ""));
+              r_copy[in_ind].recipe_in=recipe;
+              r_copy[in_ind].ingredient_in=ingredients;
+            }
+            var r_wrapper={
+              allRecipes: r_copy
+            };
+              
+            window.localStorage.setItem('values', JSON.stringify(r_wrapper));
+            this.setState({recipes: r_copy, "modal":"hidden"});
+          }
+        }
+
         break;
 
       case "add-button":
         if(this.state.modal=="hidden")
-          this.setState({"modal":"visible"});
+          this.setState(
+            {
+              "modal":"visible", 
+              "editbox": null, 
+              "modalMode":"add"}
+              );
         else 
-          this.setState({"modal": "hidden"});
+          this.setState(
+            {
+              "modal": "hidden", 
+              "editbox": null, 
+              "modalMode": "add"
+            });
         break;
 
       case "modal-back-button":
-        this.setState({"modal":"hidden"});
+        this.setState(
+          {
+            "modal":"hidden"
+          });
         break;
     }
+
+    if((/-edit-button/g).test(e.target.id)){
+      var ind= e.target.id.slice().replace(/-edit-button/g, "").replace(/ing-/g, "");
+      this.setState(
+        {
+          "modal":"visible", 
+          "editbox": this.state.recipes[ind],
+          "modalMode": ("edit"+ind)
+        });
+    }
+
+    else if ((/-delete-button/g).test(e.target.id)){
+      ind= e.target.id.slice().replace(/-delete-button/g, "").replace(/ing-/g, "");
+      r_copy= this.state.recipes.slice();
+      r_copy.splice(+ind, 1);
+      r_wrapper= {allRecipes: r_copy};
+      window.localStorage.setItem('values', JSON.stringify(r_wrapper));
+      this.setState({"recipes": r_copy});
+    }
+
   },
+
   render: function(){
     return (
     <div className="recipebox" id="i_recipebox" onClick={this.handleClick}>
-      <ContainerBox modalVisible={this.state.modal=="hidden"?"inactive":"active"}/>
-      {this.state.modal=="visible"? <Modal id="modal"/>: null}
+      <ContainerBox modalVisible={this.state.modal=="hidden"?"inactive":"active"}>
+        <Menus/>
+        {
+          this.state.recipes.map(function(data, index){
+            return(
+              <IngredientBox id={"ing-"+index}name={data.recipe_in} ingredients={data.ingredient_in} key={index}/>
+            )
+          })
+        }
+        </ContainerBox>
+      {this.state.modal=="visible"? <Modal id="modal" vals={this.state.editbox==null? null: this.state.editbox}/>: null}
     </div>
     )
   }

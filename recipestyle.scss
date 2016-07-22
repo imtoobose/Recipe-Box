@@ -4,6 +4,15 @@
   top:50%;
   transform:translate(-50%, -50%);
 }
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400');
+$back: #3C3C3B;
+$boxcolor: #FFFFFF;
+$font: 'Open Sans', Calibri;
+
+body{
+  background:$back;
+  font-family: $font;
+}
 
 button{
   cursor:pointer;
@@ -21,15 +30,29 @@ button{
 }
 
 .ingbox{
-  background: hsl(180,40, 70);
+  background: $boxcolor;
+  border-radius: 2%;
+  color:#545454;
   cursor:pointer;
   display:block;
   flex: 1 0 auto;
-  height:100px;
+  height:auto;
   margin:10px;
   overflow-y:auto;
-  width:100px;
-  max-width:100px;
+  width:200px;
+  & .ingbox-name{
+    display:block;
+    font-size: 1.4em;
+    font-weight: 400;
+    position: relative;
+    margin: 0 auto;
+    text-align:center;
+  }
+  & .ingredient{
+    font-size: 1em;
+    margin: 0 auto;
+    font-weight: 300;
+  }
 }
 
 .menus{
