@@ -92,6 +92,9 @@ var IngredientBox = React.createClass({
 var Modal = React.createClass({
   displayName: 'Modal',
 
+  componentDidMount: function () {
+    document.getElementById('text-modal').focus();
+  },
   render: function () {
     return React.createElement(
       'div',

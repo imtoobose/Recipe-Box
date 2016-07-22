@@ -76,6 +76,9 @@ var IngredientBox= React.createClass({
 //Works for editing when vals is not "add"
 
 var Modal= React.createClass({
+  componentDidMount: function(){
+    document.getElementById('text-modal').focus();
+  },
   render: function(){
     return(
       <div {...this.props} className="modal">
